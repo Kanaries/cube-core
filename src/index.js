@@ -1,4 +1,4 @@
-import { periodCube, momentCube } from './core/cube.js'
+import { periodCube, momentCube } from './core/index.js'
 function createCube({type, aggFunc=count, factTable=[], dimensions=[], measures=[]}) {
     switch (type) {
         case 'period':

@@ -21,6 +21,27 @@ let cube = createCube ({
     measures: ['mea1', 'mea2', ..., 'mean']
 })
 ```
++ `type`: cube的类型，`moment`适用于构建一棵不变的树（不会有新节点的插入等操作），`period`类型更适合处理有持续的插入、修改、查询等操作的场景。
++ factTable: 事实表数据。
++ dimensions: 维度数组，对应事实表中的维度字段名
++ measures: 度量数组，对应事实表中的度量字段名
++ aggFunc: 聚合函数，接收两个参数subset, measures。示例：
+```js
+function sum_unsafe (subset, MEASURES) {
+    let sums = {}
+    MEASURES.forEach((mea) => {
+      sums[mea] = 0
+    })
+    for (let i = 0, len = subset.length; i < len; i++) {
+        MEASURES.forEach((mea) => {
+            sums[mea] += subset[i][mea]
+          })
+    }
+    return sums
+}
+```
+
+你可以选择在做聚合运算时进行类型判断以防止意外的错误，但聚合运算将会是整个cube求解中很消耗资源的一部分、所以尽量保证将数据清洗、特殊处理的过程放在cube求解之前，保证cube拿到的faceTable是干净、安全的数据。
 
 #### 建树
 ```js
