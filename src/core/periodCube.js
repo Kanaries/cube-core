@@ -8,9 +8,9 @@ class pNode {
     push () {
         this._rawData.push(...arguments)
     }
-    aggData (MEASURES = []) {
+    aggData (measures = []) {
         if (!this.cache) {
-            this._aggData = this.aggFunc(this.rawData, MEASURES)
+            this._aggData = this.aggFunc(this.rawData, measures)
             this.cache = true
         }
         return this._aggData
@@ -42,16 +42,16 @@ class pNode {
 class periodCube {
     constructor (props) {
         this.aggFunc = props.aggFunc
-        this.FACT_TABLE = props.FACT_TABLE
-        this.DIMENSIONS = props.DIMENSIONS
-        this.MEASURES = props.MEASURES
+        this.factTable = props.factTable
+        this.dimensions = props.dimensions
+        this.measures = props.measures
     }
 
     buildTree () {
         let tree = new pNode(this.aggFunc)
-        let len = this.FACT_TABLE.length, i
+        let len = this.factTable.length, i
         for (i = 0; i < len; i++) {
-            this.insertNode(this.FACT_TABLE[i], tree, 0)
+            this.insertNode(this.factTable[i], tree, 0)
         }
         this.tree = tree
         return tree
@@ -60,8 +60,8 @@ class periodCube {
     insertNode (record, node, level) {
         node.push(record)
         node.cache = false
-        if (level < this.DIMENSIONS.length) {
-            let member = record[this.DIMENSIONS[level]]
+        if (level < this.dimensions.length) {
+            let member = record[this.dimensions[level]]
             if (!node.children.has(member)) {
                 node.children.set(member, new pNode(this.aggFunc))
             }
@@ -74,7 +74,7 @@ class periodCube {
         for (let child of children) {
             this.aggTree(child)
         }
-        node.aggData(this.MEASURES)
+        node.aggData(this.measures)
         return node
     }
 
@@ -83,7 +83,7 @@ class periodCube {
         for (let child of children) {
             this.aggTree(child)
         }
-        node.aggData(this.MEASURES)
+        node.aggData(this.measures)
         return node
     }
 }

@@ -4,23 +4,23 @@ function createCube({type, aggFunc=count, factTable=[], dimensions=[], measures=
         case 'period':
             return new periodCube({
                 aggFunc,
-                FACT_TABLE: factTable,
-                DIMENSIONS: dimensions,
-                MEASURES: measures
+                factTable,
+                dimensions,
+                measures
             })
         case 'moment':
             return new momentCube({
                 aggFunc,
-                FACT_TABLE: factTable,
-                DIMENSIONS: dimensions,
-                MEASURES: measures
+                factTable,
+                dimensions,
+                measures
             })
         default:
             return new momentCube({
                 aggFunc,
-                FACT_TABLE: factTable,
-                DIMENSIONS: dimensions,
-                MEASURES: measures
+                factTable,
+                dimensions,
+                measures
             })
     }
 }
