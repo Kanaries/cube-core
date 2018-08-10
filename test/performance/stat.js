@@ -8,9 +8,6 @@ function sum_unsafe (subset, MEASURES) {
             sums[mea] += subset[i][mea]
           })
     }
-    MEASURES.forEach((mea) => {
-        sums[mea] = sums[mea]
-    })
     return sums
 }
 
@@ -32,9 +29,6 @@ function sum_safe (subset, MEASURES) {
             sums[mea] += subset[i][mea]
           })
     }
-    MEASURES.forEach((mea) => {
-        sums[mea] = sums[mea]
-    })
     return sums
 }
 

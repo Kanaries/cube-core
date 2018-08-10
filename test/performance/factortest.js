@@ -1,8 +1,6 @@
 const fs = require('fs')
-const ds = require('../dist/bundle.js')
+const { createCube } = require('../../dist/bundle.js')
 const { sum_safe, sum_unsafe } = require('./stat.js')
-// const { TestTimer } = require('./testtimer.js')
-const DataSet = ds.DataSet
 
 let dimRange = [0, 20]
 let meaRange = [0, 100]
@@ -21,7 +19,7 @@ function makeData (D, M, S) {
             record[dim] = (Math.random() * (dimRange[1] - dimRange[0]) + dimRange[0]).toFixed(0)
         })
         Measures.forEach(mea => {
-            record[mea] = parseInt(Math.random() * (dimRange[1] - dimRange[0]) + dimRange[0])
+            record[mea] = parseInt(Math.random() * (meaRange[1] - meaRange[0]) + dimRange[0])
         })
         data.push(record)
     }
@@ -34,11 +32,12 @@ function test({ data, Dimensions, Measures}) {
         dataCount: data.length,
         DimMember: dimRange[1] - dimRange[0]
     };
-    let dataset = new DataSet({
+    let dataset = createCube({
+        type: 'period',
         aggFunc: sum_unsafe,
-        FACT_TABLE: data,
-        DIMENSIONS: Dimensions,
-        MEASURES: Measures
+        factTable: data,
+        dimensions: Dimensions,
+        measures: Measures
     })
     t0 = new Date().getTime();
     dataset.buildTree()
@@ -47,6 +46,7 @@ function test({ data, Dimensions, Measures}) {
     t0 = new Date().getTime();
     dataset.aggTree()
     t1 = new Date().getTime();
+    // console.log(dataset.tree._aggData, dataset.tree.cache)
     info.aggTree = t1 - t0
     console.log(info)
     log.push(info)
@@ -56,19 +56,20 @@ function test({ data, Dimensions, Measures}) {
 //     makeData(10, 10, 50000 + i * 50000)
 // }
 
-// for (let i = 0; i < 10; i++) {
-//     for (let j = 2; j <= 10; j++) {
-//         for (let k = 1; k <= 10; k++) {
-//             makeData(j, k, 10000 + i * 10000)
-//         }
-//     }
-// }
-
-for (let i = 0; i < 20; i++) {
-
-    makeData(10, 10, 500000)
-    dimRange[0]++
+for (let i = 0; i < 10; i++) {
+    for (let j = 2; j <= 10; j++) {
+        for (let k = 1; k <= 10; k++) {
+            makeData(j, k, 10000 + i * 10000)
+        }
+    }
 }
 
-fs.writeFile('testlog_dim_member.json', JSON.stringify(log), (err) => {console.log(err)})
+// for (let i = 0; i < 20; i++) {
+
+//     makeData(10, 10, 500000)
+//     dimRange[0]++
+// }
+
+
+// fs.writeFile('testlog_dim_member.json', JSON.stringify(log), (err) => {console.log(err)})
 
