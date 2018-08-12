@@ -156,25 +156,40 @@ describe('createCube', () => {
         });
     })
 
-    // describe('timelimit test', () => {
-    //     it('[moment] Time Cost (D=10, M = 10, S = 200000) < 10s', () => {
-    //         let {data, Dimensions, Measures} = makeData(10, 10, 200000)
-    //         let cube = createCube({
-    //             type: 'moment',
-    //             aggFunc: sum_unsafe,
-    //             factTable: data,
-    //             dimensions: Dimensions,
-    //             measures: Measures
-    //         })
-    //         let t0, t1, t2, t3;
-    //         t0 = new Date().getTime()
-    //         cube.buildTree()
-    //         t1 = new Date().getTime()
-    //         cube.aggTree()
-    //         t2 = new Date().getTime()
-    //         console.log(`build=${t1 - t0},agg=${t2 - t1}`)
-    //         assert.strictEqual(t2 - t0 < 10000, true)
-    //     });
-    // })
+    describe('timelimit test', () => {
+        it('[moment] Time Cost (D=10, M = 10, S = 200000) < 10s', () => {
+            let {data, Dimensions, Measures} = makeData(10, 10, 200000)
+            let t0, t1, t2, t3;
+            t0 = new Date().getTime()
+            let cube = createCube({
+                type: 'moment',
+                aggFunc: sum_unsafe,
+                factTable: data,
+                dimensions: Dimensions,
+                measures: Measures
+            })
+            t1 = new Date().getTime()
+            console.log('init Cube', t1 - t0)
+            cube.setData({
+                dimensions: Dimensions.slice(3)
+            })
+            t2 = new Date().getTime()
+            console.log('setData: Dimensions', t2 - t1)
+            // check({cube, dataSource: data, Dimensions: Dimensions.slice(3), Measures})
+            // checkAgg({cube, dataSource: data, Dimensions: Dimensions.slice(3), Measures})
+            cube.setData({dimensions: Dimensions})
+            t3 = new Date().getTime()
+            cube.setData({
+                measures: Measures.slice(3)
+            })
+            t4 = new Date().getTime()
+            console.log('setData: Measures', t4 - t3)
+            // check({cube, dataSource: data, Dimensions, Measures: Measures.slice(3)})
+            // checkAgg({cube, dataSource: data, Dimensions, Measures: Measures.slice(3)})
+            cube.setData({measures: Measures})
+            // console.log(`build=${t1 - t0},agg=${t2 - t1}`)
+            assert.strictEqual(t1 - t0 < 10000, true)
+        });
+    })
 
 });
