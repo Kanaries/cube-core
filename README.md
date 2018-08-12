@@ -55,7 +55,7 @@ cube.setData({
 })
 ```
 ### 流程
-![](../images/lifecycle of moment cube.png)
+![](http://carrot.zone:8080/lifecycle of moment cube.png)
 
 ## 测试
 cube-core为你提供了最基本的算法正确性检验测试与时间测试，你只需要使用`npm test`即可进行测试。
