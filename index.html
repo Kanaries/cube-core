@@ -5,6 +5,79 @@
     <script src="https://unpkg.com/lodash@4.16.6"></script>
   </head>
   <body>
-    <script src="./src/index.js"></script>
+    <script src="./dist/bundle.js"></script>
+    <script>
+function sum_unsafe (subset, MEASURES) {
+    let sums = {}
+    MEASURES.forEach((mea) => {
+      sums[mea] = 0
+    })
+    for (let i = 0, len = subset.length; i < len; i++) {
+        MEASURES.forEach((mea) => {
+            sums[mea] += subset[i][mea]
+          })
+    }
+    return sums
+}
+function sum_gpu (subset, keys) {
+    var sum = keys.map(key => 0)
+    for (let i = 0; i < subset.length; i++) {
+        for (j = 0; j < keys.length; j++) {
+            sum[j] += subset[i][keys[j]]
+        }
+    }
+    return sum;
+}
+function sum_test (subset, len) {
+    
+}
+let dimRange = [0, 20]
+let meaRange = [0, 100]
+function makeData (D, M, S) {
+    let Dimensions = [], Measures = [], data = []
+    for (let i = 0; i < D; i++) {
+        Dimensions.push('dim' + i.toString())
+    }
+    for (let i = 0; i < M; i++) {
+        Measures.push('mea' + i.toString())
+    }
+    for (let i = 0; i < S; i++) {
+        let record = {}
+        Dimensions.forEach(dim => {
+            record[dim] = (Math.random() * (dimRange[1] - dimRange[0]) + dimRange[0]).toFixed(0)
+        })
+        Measures.forEach(mea => {
+            record[mea] = parseInt(Math.random() * (meaRange[1] - meaRange[0]) + meaRange[0])
+        })
+        data.push(record)
+    }
+    return {data, Dimensions, Measures}
+}
+
+let t0, t1, cube
+        let {data, Dimensions, Measures} = makeData(3, 30000, 60)
+        t0 = new Date().getTime() 
+        cube = createCube({
+            type: 'moment',
+            aggFunc: sum_unsafe,
+            factTable: data,
+            dimensions: Dimensions,
+            measures: Measures
+        })
+        t1 = new Date().getTime()
+        console.log(t1 - t0)
+
+        t0 = new Date().getTime() 
+        cube = createCube({
+            type: 'moment-gpu',
+            aggFunc: sum_gpu,
+            factTable: data,
+            dimensions: Dimensions,
+            measures: Measures
+        })
+        t1 = new Date().getTime()
+        console.log(t1 - t0)
+
+    </script>
   </body>
 </html>

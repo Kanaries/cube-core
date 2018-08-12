@@ -1,6 +1,13 @@
-import { periodCube, momentCube } from './core/index.js'
+import { periodCube, momentCube, momentCubeGPU } from './core/index.js'
 function createCube({type, aggFunc=count, factTable=[], dimensions=[], measures=[]}) {
     switch (type) {
+        case 'moment-gpu':
+        return new momentCubeGPU({
+            aggFunc,
+            factTable,
+            dimensions,
+            measures
+        })
         case 'period':
             return new periodCube({
                 aggFunc,
@@ -37,4 +44,5 @@ function count (subset, MEASURES) {
     }
     return cnts
 }
+
 export { createCube }

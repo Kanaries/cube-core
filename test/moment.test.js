@@ -158,7 +158,7 @@ describe('createCube', () => {
 
     describe('timelimit test', () => {
         it('[moment] Time Cost (D=10, M = 10, S = 200000) < 10s', () => {
-            let {data, Dimensions, Measures} = makeData(10, 10, 200000)
+            let {data, Dimensions, Measures} = makeData(10, 10, 50000)
             let t0, t1, t2, t3;
             t0 = new Date().getTime()
             let cube = createCube({
