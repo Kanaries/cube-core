@@ -1,5 +1,6 @@
 # cube-core
 cube-core 是一个高效的Cube求解工具，你可以借助它来实现快速的Cube运算或搭建pivot table组件。
+如果你想了解能够使用cube-core做什么，可以了解一个基于cube-core实现的前端的高性能pivot table项目：[fast-pivot](https://github.com/ObservedObserver/fast-pivot)
 
 ## 使用
 
@@ -54,8 +55,91 @@ cube.setData({
     dimensions: Dimensions.slice(3)
 })
 ```
+
+#### cube.tree
+cube中构建的聚合树(索引树)会构建在属性tree中，你可以尝试自定义的对tree上的每个节点进行操作。
+节点node的结构为
+```js
+// moment cube
+class Node {
+    constructor () {
+        this.children = new Map()
+        this.rawData = []
+    }
+    push () {
+        this.rawData.push(...arguments)
+    }
+    
+    aggData (aggFunc, measures = []) {
+        this._aggData = aggFunc(this.rawData, measures)
+        return this._aggData
+    }
+}
+// period cube
+class pNode {
+    constructor (aggFunc) {
+        this.children = new Map()
+        this._rawData = []
+        this.aggFunc = aggFunc
+        this.cache = false
+    }
+    push () {
+        this._rawData.push(...arguments)
+    }
+    aggData (measures = []) {
+        if (!this.cache) {
+            this._aggData = this.aggFunc(this.rawData, measures)
+            this.cache = true
+        }
+        return this._aggData
+    }
+    clearCache () {
+        this.cache = false
+    }
+    get rawData () {
+        if (!this.cache) {
+            if (this.children.size !== 0) {
+                let children = this.children.values()
+                let rawData = []
+                for (let child of children) {
+                    let i, data = child.rawData;
+                    let len = data.length;
+                    for (i = 0; i < len; i++) {
+                        rawData.push(data[i])
+                    }
+                }
+                this._rawData = rawData
+            }
+            this.cache = true
+        }
+        return this._rawData
+    }
+}
+```
+
+
+#### node._aggData 与 node.aggData(aggFunc)
+node 为tree上的任意节点，在node上，我们可以通过_aggData调用已经计算过的计算聚合值的缓存，也可以通过aggData(aggFunc)来重新获得当前节点基于聚合函数aggFunc的新的聚合值，这使得你可以在树的不同层级的不同节点使用不同的聚合方式。
+```js
+> node._aggData
+> {profit: 120, cost: 200, count: 15}
+```
+
+#### node.rawData
+为了支持更多的场景，你还可以直接从当前节点获取该节点对应的原始数据而非聚合数据。这在可视化类BI应用中的聚合度量模式切换时的实现会提供极大的便利（比如散点图）。
+```js
+> node.rawData
+[
+    {profit: 12, cost: 20, count: 1},
+    {profit: 8, cost: 12, count: 1},
+    {profit: 31, cost: 28, count: 1},
+    {profit: 19, cost: 5, count: 1},
+    ...
+]
+```
+
 ### 流程
-![](http://carrot.zone:8080/lifecycle of moment cube.png)
+![](http://carrot.zone:8080/lifecycle-core-cube.png)
 
 ## 测试
 cube-core为你提供了最基本的算法正确性检验测试与时间测试，你只需要使用`npm test`即可进行测试。
