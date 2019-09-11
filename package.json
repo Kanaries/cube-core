@@ -1,8 +1,8 @@
 {
   "name": "cube-core",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "",
-  "main": "./dist/bundle.js",
+  "main": "./src/index.ts",
   "scripts": {
     "pretest": "npm run build",
     "test": "mocha --no-timeouts",
