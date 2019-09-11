@@ -2,7 +2,9 @@
     "compilerOptions": {
         "outDir": "./built",
         "allowJs": true,
-        "target": "es5"
+        "lib": ["es2019"],
+        "target": "es5",
+        "downlevelIteration": true
     },
     "include": [
         "./src/**/*"

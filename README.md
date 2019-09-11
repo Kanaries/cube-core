@@ -1,4 +1,8 @@
 # cube-core
+![](https://travis-ci.com/ObservedObserver/cube-core.svg?branch=master)
+![](https://img.shields.io/github/license/ObservedObserver/cube-core)
+![](https://img.shields.io/npm/v/cube-core)
+
 cube-core 是一个高效的Cube求解工具，你可以借助它来实现快速的Cube运算或搭建pivot table组件。
 如果你想了解能够使用cube-core做什么，可以了解一个基于cube-core实现的前端的高性能pivot table项目：[fast-pivot](https://github.com/ObservedObserver/fast-pivot)
 

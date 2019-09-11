@@ -1,20 +1,30 @@
-class Node {
+import { AggFC, DataSource, Fields, CubeProps } from '../index.d';
+
+class Node<Row> {
+    public children: Map<string, Node<Row>>;
+    public rawData: DataSource<Row>;
+    private _aggData: Row;
     constructor () {
         this.children = new Map()
         this.rawData = []
     }
-    push () {
-        this.rawData.push(...arguments)
+    push (...params: Array<Row>) {
+        this.rawData.push(...params)
     }
     
-    aggData (aggFunc, measures = []) {
+    aggData (aggFunc: AggFC<Row>, measures = []) {
         this._aggData = aggFunc(this.rawData, measures)
         return this._aggData
     }
 }
 
-class momentCube {
-    constructor (props) {
+class momentCube<Row> {
+    private aggFunc: AggFC<Row>;
+    private factTable: DataSource<Row>;
+    private dimensions: Fields;
+    private measures: Fields;
+    public tree: Node<Row>;
+    constructor (props: CubeProps<Row>) {
         this.aggFunc = props.aggFunc
         this.factTable = props.factTable
         this.dimensions = props.dimensions
@@ -23,7 +33,7 @@ class momentCube {
         this.aggTree()
     }
 
-    setData (props) {
+    setData (props: CubeProps<Row>): void {
         let { 
             aggFunc = this.aggFunc, 
             factTable = this.factTable, 
@@ -45,8 +55,8 @@ class momentCube {
         }
     }
 
-    buildTree () {
-        let tree = new Node()
+    buildTree (): Node<Row> {
+        let tree: Node<Row> = new Node()
         let len = this.factTable.length, i
         for (i = 0; i < len; i++) {
             this.insertNode(this.factTable[i], tree, 0)
@@ -55,7 +65,7 @@ class momentCube {
         return tree
     }
 
-    insertNode (record, node, level) {
+    insertNode (record: Row, node: Node<Row>, level: number): void {
         if (level === this.dimensions.length) {
             node.push(record)
         } else {
@@ -67,13 +77,14 @@ class momentCube {
         }
     }
 
-    aggTree (node = this.tree) {
+    aggTree (node = this.tree): Node<Row> {
         if (node.children.size > 0) {
             node.rawData = []
             let children = node.children.values()
             for (let child of children) {
-                let i, data = this.aggTree(child).rawData;
-                let len = data.length;
+                let i: number;
+                let data: DataSource<Row> = this.aggTree(child).rawData;
+                let len: number = data.length;
                 for (i = 0; i < len; i++) {
                     node.rawData.push(data[i])
                 }

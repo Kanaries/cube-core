@@ -1,5 +1,10 @@
-import { periodCube, momentCube } from './core/index.js'
-function createCube({type, aggFunc=count, factTable=[], dimensions=[], measures=[]}) {
+import { periodCube, momentCube } from './core/index'
+import { CubeProps, AggFC } from './index.d'
+type JsonRecord = { [key: string]: any };
+interface TypedCube extends CubeProps<JsonRecord> {
+    type: 'period' | 'moment';
+}
+function createCube({ type, aggFunc = count, factTable = [], dimensions = [], measures = [] }: TypedCube): periodCube<JsonRecord> | momentCube<JsonRecord> {
     switch (type) {
         case 'period':
             return new periodCube({
@@ -25,8 +30,8 @@ function createCube({type, aggFunc=count, factTable=[], dimensions=[], measures=
     }
 }
 
-function count (subset, MEASURES) {
-    let cnts = {}
+const count: AggFC<JsonRecord> = function (subset, MEASURES) {
+    let cnts: JsonRecord = {}
     MEASURES.forEach((mea) => {
       cnts[mea] = 0
     })
