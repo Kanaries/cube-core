@@ -1,6 +1,7 @@
 import { periodCube, momentCube } from './core/index'
-import { CubeProps, AggFC } from './index.d'
-type JsonRecord = { [key: string]: any };
+import { CubeProps, JsonRecord } from './index.d'
+import { count } from './utils/aggregation';
+
 interface TypedCube extends CubeProps<JsonRecord> {
     type: 'period' | 'moment';
 }
@@ -30,16 +31,6 @@ function createCube({ type, aggFunc = count, factTable = [], dimensions = [], me
     }
 }
 
-const count: AggFC<JsonRecord> = function (subset, MEASURES) {
-    let cnts: JsonRecord = {}
-    MEASURES.forEach((mea) => {
-      cnts[mea] = 0
-    })
-    for (let i = 0, len = subset.length; i < len; i++) {
-        MEASURES.forEach((mea) => {
-            cnts[mea] ++
-          })
-    }
-    return cnts
-}
 export { createCube }
+
+export * from './utils/aggregation'

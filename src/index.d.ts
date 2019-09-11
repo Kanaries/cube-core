@@ -11,3 +11,5 @@ export interface CubeProps<Row> {
   measures?: Fields;
   [key: string]: any;
 }
+
+export type JsonRecord = { [key: string]: any };

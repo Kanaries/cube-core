@@ -1,6 +1,5 @@
 const fs = require('fs')
-const {createCube} = require('../../dist/bundle.js')
-const { sum_safe, sum_unsafe } = require('./stat.js')
+const { createCube, sum, sum_unsafe } = require('../../dist/bundle.js')
 
 let t1, t0;
 t0 = new Date().getTime();

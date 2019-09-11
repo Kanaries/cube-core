@@ -149,8 +149,15 @@ node 为tree上的任意节点，在node上，我们可以通过_aggData调用�
 ]
 ```
 
+#### utils
+cube-core提供了一些常见的聚合函数：
+```js
+import { sum, unsafe_sum, count } from 'cube-core';
+// sum 会做类型安全检查的和
+```
+
 ### 流程
-![](http://carrot.zone:8080/lifecycle-core-cube.png)
+![leftcycle-img](http://carrot.zone:8080/lifecycle-core-cube.png)
 
 ## 测试
 cube-core为你提供了最基本的算法正确性检验测试与时间测试，你只需要使用`npm test`即可进行测试。

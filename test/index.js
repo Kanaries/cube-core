@@ -1,6 +1,6 @@
 const assert = require('assert');
-const { createCube } = require('../dist/bundle.js')
-const { sum_unsafe } = require('./performance/stat.js')
+const { createCube, sum_unsafe } = require('../dist/bundle.js')
+
 let dimRange = [0, 20]
 let meaRange = [0, 100]
 function makeData (D, M, S) {
