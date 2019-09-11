@@ -1,0 +1,18 @@
+{
+  "overrides": [
+    {
+      "files": ["src/**/*.ts"],
+      "options": {
+        "semi": true,
+        "tabWidth": 4
+      }
+    },
+    {
+      "files": ["test/**/*.js"],
+      "options": {
+        "semi": false,
+        "tabWidth": 4
+      }
+    }
+  ]
+}
