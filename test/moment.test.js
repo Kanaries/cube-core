@@ -99,6 +99,7 @@ describe('createCube', () => {
         it('test aggTree', () => {
             checkAgg({cube, dataSource: data, Dimensions, Measures})
         })
+
         it('test after set dimensions', () => {
             cube.setData({
                 dimensions: Dimensions.slice(3)
@@ -142,6 +143,31 @@ describe('createCube', () => {
             check({cube, dataSource: data, Dimensions, Measures})
             checkAgg({cube, dataSource: data, Dimensions, Measures})
         });
+
+        it('[moment]test tree.get(dimMembers)', () => {
+            let {data, Dimensions, Measures} = makeData(3, 3, 20)
+            let cube = createCube({
+                type: 'moment',
+                aggFunc: sum_unsafe,
+                factTable: data,
+                dimensions: Dimensions,
+                measures: Measures
+            })
+            const rand = Math.round(Math.random() * data.length * 0.2);
+
+            for (let i = 0; i <= rand; i++) {
+                const dimMembers = Dimensions.map(dim => data[i][dim]);
+                const result = cube.get(dimMembers);
+                assert.notEqual(result, false);
+            }
+
+            const total = cube.get([]);
+            assert.notEqual(total, false);
+
+            const noExist = cube.get(['no-exist']);
+            assert.equal(noExist, false);
+        })
+
         it('[moment]large dataset test (2000)', () => {
             let {data, Dimensions, Measures} = makeData(10, 10, 2000)
             let cube = createCube({

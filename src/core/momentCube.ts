@@ -32,7 +32,22 @@ class momentCube<Row> {
         this.buildTree()
         this.aggTree()
     }
-
+    get (dimensions: Fields): Row | false {
+        const { tree, aggFunc, measures } = this;
+        const search: (node: Node<Row>, level: number) => Row | false = (node, level) => {
+            if (level === dimensions.length) {
+                return node.aggData(aggFunc, measures);
+            }
+            let children = node.children.entries();
+            for (let [childName, child] of children) {
+                if (childName === dimensions[level]) {
+                    return search(child, level + 1);
+                }
+            }
+            return false;
+        }
+        return search(tree, 0);
+    }
     setData (props: CubeProps<Row>): void {
         let { 
             aggFunc = this.aggFunc, 

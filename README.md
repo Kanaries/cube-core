@@ -60,6 +60,13 @@ cube.setData({
 })
 ```
 
+#### cube.get(dimMembers: any[]): Row
+从cube中获取某一维度成员组合的聚合值
+```js
+dimensions = ['Sex', 'Age', 'PClass'];
+cube.get(['male', 30, 1]);
+```
+
 #### cube.tree
 cube中构建的聚合树(索引树)会构建在属性tree中，你可以尝试自定义的对tree上的每个节点进行操作。
 节点node的结构为
