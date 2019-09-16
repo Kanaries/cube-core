@@ -1,4 +1,4 @@
-import { AggFC, DataSource, Fields, CubeProps } from "../index.d";
+import { AggFC, DataSource, Fields, CubeProps } from "../types";
 
 class Node<Row> {
     public children: Map<string, Node<Row>>;

@@ -1,5 +1,5 @@
 import { periodCube, momentCube } from "./core/index";
-import { CubeProps, JsonRecord } from "./index.d";
+import { CubeProps, JsonRecord } from "./types";
 import { count } from "./utils/aggregation";
 
 interface TypedCube extends CubeProps<JsonRecord> {

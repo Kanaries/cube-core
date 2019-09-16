@@ -1,14 +1,14 @@
 {
   "name": "cube-core",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "",
-  "main": "./dist/bundle.js",
+  "main": "./dist/built.js",
   "scripts": {
     "pretty": "prettier src/**/*.ts --write --config-precedence 'cli-override'",
     "pretest": "npm run pretty && npm run build",
     "test": "mocha --no-timeouts",
     "start": "webpack --watch --mode=development",
-    "build": "webpack --mode=production"
+    "build": "tsc"
   },
   "repository": {
     "type": "git",

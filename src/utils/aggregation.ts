@@ -1,4 +1,4 @@
-import { AggFC, JsonRecord } from "../index.d";
+import { AggFC, JsonRecord } from "../types";
 
 export const sum_unsafe: AggFC<JsonRecord> = function(subset, measures) {
     let sums: JsonRecord = {};
