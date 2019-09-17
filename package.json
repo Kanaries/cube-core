@@ -1,9 +1,9 @@
 {
   "name": "cube-core",
-  "version": "2.5.0",
+  "version": "2.9.0",
   "description": "",
   "main": "./built/index.js",
-  "types": "./build/index.d.ts",
+  "types": "./built/index.d.ts",
   "scripts": {
     "pretty": "prettier src/**/*.ts --write --config-precedence 'cli-override'",
     "pretest": "npm run pretty && npm run build",

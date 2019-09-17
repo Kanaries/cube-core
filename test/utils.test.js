@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { sum, sum_unsafe, count } = require('../dist/bundle.js')
+const { sum, sum_unsafe, count } = require('../built/index.js')
 
 describe('[utils]export aggregation func', () => {
   it('func exist', () => {

@@ -58,8 +58,26 @@ class periodCube<Row> {
         this.dimensions = props.dimensions;
         this.measures = props.measures;
     }
-
-    buildTree(): Node<Row> {
+    public get(dimensions: Fields): Row | false {
+        const { tree, aggFunc, measures } = this;
+        const search: (node: Node<Row>, level: number) => Row | false = (
+            node,
+            level
+        ) => {
+            if (level === dimensions.length) {
+                return node.aggData(measures);
+            }
+            let children = node.children.entries();
+            for (let [childName, child] of children) {
+                if (childName === dimensions[level]) {
+                    return search(child, level + 1);
+                }
+            }
+            return false;
+        };
+        return search(tree, 0);
+    }
+    public buildTree(): Node<Row> {
         let tree: Node<Row> = new Node(this.aggFunc);
         let len = this.factTable.length,
             i;
@@ -70,7 +88,7 @@ class periodCube<Row> {
         return tree;
     }
 
-    insertNode(record, node, level): void {
+    public insertNode(record, node, level): void {
         node.push(record);
         node.cache = false;
         if (level < this.dimensions.length) {
@@ -82,7 +100,7 @@ class periodCube<Row> {
         }
     }
 
-    aggTree(node: Node<Row> = this.tree): Node<Row> {
+    public aggTree(node: Node<Row> = this.tree): Node<Row> {
         let children = node.children.values();
         for (let child of children) {
             this.aggTree(child);
@@ -91,7 +109,7 @@ class periodCube<Row> {
         return node;
     }
 
-    aggNode(node = this.tree): Node<Row> {
+    public aggNode(node = this.tree): Node<Row> {
         let children = node.children.values();
         for (let child of children) {
             this.aggTree(child);

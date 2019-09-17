@@ -3,7 +3,7 @@ import { AggFC, DataSource, Fields, CubeProps } from "../types";
 class Node<Row> {
     public children: Map<string, Node<Row>>;
     public rawData: DataSource<Row>;
-    private _aggData: Row;
+    public _aggData: Row;
     constructor() {
         this.children = new Map();
         this.rawData = [];
@@ -32,7 +32,7 @@ class momentCube<Row> {
         this.buildTree();
         this.aggTree();
     }
-    get(dimensions: Fields): Row | false {
+    public get(dimensions: Fields): Row | false {
         const { tree, aggFunc, measures } = this;
         const search: (node: Node<Row>, level: number) => Row | false = (
             node,
@@ -51,7 +51,7 @@ class momentCube<Row> {
         };
         return search(tree, 0);
     }
-    setData(props: CubeProps<Row>): void {
+    public setData(props: CubeProps<Row>): void {
         let {
             aggFunc = this.aggFunc,
             factTable = this.factTable,
@@ -73,7 +73,7 @@ class momentCube<Row> {
         }
     }
 
-    buildTree(): Node<Row> {
+    public buildTree(): Node<Row> {
         let tree: Node<Row> = new Node();
         let len = this.factTable.length,
             i;
@@ -84,7 +84,7 @@ class momentCube<Row> {
         return tree;
     }
 
-    insertNode(record: Row, node: Node<Row>, level: number): void {
+    public insertNode(record: Row, node: Node<Row>, level: number): void {
         if (level === this.dimensions.length) {
             node.push(record);
         } else {
@@ -96,7 +96,7 @@ class momentCube<Row> {
         }
     }
 
-    aggTree(node = this.tree): Node<Row> {
+    public aggTree(node = this.tree): Node<Row> {
         if (node.children.size > 0) {
             node.rawData = [];
             let children = node.children.values();

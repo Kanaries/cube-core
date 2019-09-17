@@ -1,5 +1,5 @@
 const fs = require('fs')
-const { createCube, sum, sum_unsafe  } = require('../../dist/bundle.js')
+const { createCube, sum, sum_unsafe  } = require('../../built/index.js')
 
 let dimRange = [0, 20]
 let meaRange = [0, 100]
