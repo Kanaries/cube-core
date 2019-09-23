@@ -16,6 +16,25 @@ class Node<Row> {
         this._aggData = aggFunc(this.rawData, measures);
         return this._aggData;
     }
+    public getNode(dimensions: Fields): Node<Row> | null {
+        const search: (node: Node<Row>, level: number) => Node<Row> | null = (
+            node,
+            level
+        ) => {
+            if (level === dimensions.length) {
+                return node;
+            }
+            let children = node.children.entries();
+            for (let [childName, child] of children) {
+                if (childName === dimensions[level]) {
+                    return search(child, level + 1);
+                }
+            }
+            return null;
+        };
+        return search(this, 0);
+    }
+    
 }
 
 class momentCube<Row> {
@@ -51,6 +70,12 @@ class momentCube<Row> {
         };
         return search(tree, 0);
     }
+
+    public getNode(dimensions: Fields): Node<Row> | null {
+        const { tree } = this;
+        return tree.getNode(dimensions)
+    }
+
     public setData(props: CubeProps<Row>): void {
         let {
             aggFunc = this.aggFunc,

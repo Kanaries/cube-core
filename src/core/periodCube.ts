@@ -44,6 +44,24 @@ class Node<Row> {
         }
         return this._rawData;
     }
+    public getNode(dimensions: Fields): Node<Row> | null {
+        const search: (node: Node<Row>, level: number) => Node<Row> | null = (
+            node,
+            level
+        ) => {
+            if (level === dimensions.length) {
+                return node;
+            }
+            let children = node.children.entries();
+            for (let [childName, child] of children) {
+                if (childName === dimensions[level]) {
+                    return search(child, level + 1);
+                }
+            }
+            return null;
+        };
+        return search(this, 0);
+    }
 }
 
 class periodCube<Row> {
@@ -77,6 +95,11 @@ class periodCube<Row> {
         };
         return search(tree, 0);
     }
+    public getNode(dimensions: Fields): Node<Row> | null {
+        const { tree } = this;
+        return tree.getNode(dimensions);
+    }
+
     public buildTree(): Node<Row> {
         let tree: Node<Row> = new Node(this.aggFunc);
         let len = this.factTable.length,
