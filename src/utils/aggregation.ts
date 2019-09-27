@@ -1,6 +1,6 @@
 import { AggFC, JsonRecord } from "../types";
 
-export const sum_unsafe: AggFC<JsonRecord> = function(subset, measures) {
+export const sum_unsafe: AggFC = function(subset, measures) {
     let sums: JsonRecord = {};
     measures.forEach(mea => {
         sums[mea] = 0;
@@ -13,7 +13,7 @@ export const sum_unsafe: AggFC<JsonRecord> = function(subset, measures) {
     return sums;
 };
 
-export const sum: AggFC<JsonRecord> = function(subset, measures) {
+export const sum: AggFC = function(subset, measures) {
     let sums: JsonRecord = {};
     measures.forEach(mea => {
         sums[mea] = 0;
@@ -26,7 +26,7 @@ export const sum: AggFC<JsonRecord> = function(subset, measures) {
     return sums;
 };
 
-export const count: AggFC<JsonRecord> = function(subset, MEASURES) {
+export const count: AggFC = function(subset, MEASURES) {
     let cnts: JsonRecord = {};
     MEASURES.forEach(mea => {
         cnts[mea] = 0;
@@ -39,7 +39,7 @@ export const count: AggFC<JsonRecord> = function(subset, MEASURES) {
     return cnts;
 };
 
-export const mean: AggFC<JsonRecord> = function(subset, measures) {
+export const mean: AggFC = function(subset, measures) {
     let sums: JsonRecord = {};
     measures.forEach(mea => {
         sums[mea] = 0;

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { createCube, sum_unsafe } = require('../built/index.js')
+const { createCube, sum_unsafe, default: aggregate } = require('../built/index.js')
 
 let dimRange = [0, 20]
 let meaRange = [0, 100]
@@ -79,7 +79,19 @@ function checkAgg ({cube, dataSource, Dimensions, Measures}) {
 }
 
 describe('createCube', () => {
-    
+    describe('test aggregate', () => {
+        it('[aggregate]', () => {
+            let {data, Dimensions, Measures} = makeData(10, 10, 500)
+            let table = aggregate({
+                operator: 'sum',
+                dataSource: data,
+                dimensions: Dimensions,
+                measures: Measures,
+                asFields: Measures.map(mea => `${mea}_sum`)
+            })
+            assert.equal(table.length > 0, true)
+        })
+    })
 
     describe('edit moment cube', () => {
         console.log('test test1')

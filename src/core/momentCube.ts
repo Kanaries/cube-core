@@ -1,23 +1,23 @@
-import { AggFC, DataSource, Fields, CubeProps } from "../types";
+import { AggFC, DataSource, Fields, CubeProps, JsonRecord } from "../types";
 
-class Node<Row> {
-    public children: Map<string, Node<Row>>;
-    public rawData: DataSource<Row>;
-    public _aggData: Row;
+export class Node {
+    public children: Map<string, Node>;
+    public rawData: DataSource;
+    public _aggData: JsonRecord;
     constructor() {
         this.children = new Map();
         this.rawData = [];
     }
-    push(...params: Array<Row>) {
+    public push(...params: Array<JsonRecord>) {
         this.rawData.push(...params);
     }
 
-    aggData(aggFunc: AggFC<Row>, measures = []) {
+    public aggData(aggFunc: AggFC, measures = []) {
         this._aggData = aggFunc(this.rawData, measures);
         return this._aggData;
     }
-    public getNode(dimensions: Fields): Node<Row> | null {
-        const search: (node: Node<Row>, level: number) => Node<Row> | null = (
+    public getNode(dimensions: any[]): Node | null {
+        const search: (node: Node, level: number) => Node | null = (
             node,
             level
         ) => {
@@ -34,16 +34,15 @@ class Node<Row> {
         };
         return search(this, 0);
     }
-    
 }
 
-class momentCube<Row> {
-    private aggFunc: AggFC<Row>;
-    private factTable: DataSource<Row>;
+class momentCube {
+    public aggFunc: AggFC;
+    private factTable: DataSource;
     private dimensions: Fields;
     private measures: Fields;
-    public tree: Node<Row>;
-    constructor(props: CubeProps<Row>) {
+    public tree: Node;
+    constructor(props: CubeProps) {
         this.aggFunc = props.aggFunc;
         this.factTable = props.factTable;
         this.dimensions = props.dimensions;
@@ -51,9 +50,9 @@ class momentCube<Row> {
         this.buildTree();
         this.aggTree();
     }
-    public get(dimensions: Fields): Row | false {
+    public get(dimensions: any): JsonRecord | false {
         const { tree, aggFunc, measures } = this;
-        const search: (node: Node<Row>, level: number) => Row | false = (
+        const search: (node: Node, level: number) => JsonRecord | false = (
             node,
             level
         ) => {
@@ -71,12 +70,12 @@ class momentCube<Row> {
         return search(tree, 0);
     }
 
-    public getNode(dimensions: Fields): Node<Row> | null {
+    public getNode(dimensions: any): Node | null {
         const { tree } = this;
-        return tree.getNode(dimensions)
+        return tree.getNode(dimensions);
     }
 
-    public setData(props: CubeProps<Row>): void {
+    public setData(props: CubeProps): void {
         let {
             aggFunc = this.aggFunc,
             factTable = this.factTable,
@@ -98,8 +97,8 @@ class momentCube<Row> {
         }
     }
 
-    public buildTree(): Node<Row> {
-        let tree: Node<Row> = new Node();
+    public buildTree(): Node {
+        let tree: Node = new Node();
         let len = this.factTable.length,
             i;
         for (i = 0; i < len; i++) {
@@ -109,7 +108,7 @@ class momentCube<Row> {
         return tree;
     }
 
-    public insertNode(record: Row, node: Node<Row>, level: number): void {
+    public insertNode(record: JsonRecord, node: Node, level: number): void {
         if (level === this.dimensions.length) {
             node.push(record);
         } else {
@@ -121,13 +120,13 @@ class momentCube<Row> {
         }
     }
 
-    public aggTree(node = this.tree): Node<Row> {
+    public aggTree(node = this.tree): Node {
         if (node.children.size > 0) {
             node.rawData = [];
             let children = node.children.values();
             for (let child of children) {
                 let i: number;
-                let data: DataSource<Row> = this.aggTree(child).rawData;
+                let data: DataSource = this.aggTree(child).rawData;
                 let len: number = data.length;
                 for (i = 0; i < len; i++) {
                     node.rawData.push(data[i]);

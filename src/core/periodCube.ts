@@ -1,21 +1,21 @@
-import { AggFC, DataSource, Fields, CubeProps } from "../types";
+import { AggFC, DataSource, Fields, CubeProps, JsonRecord } from "../types";
 
-class Node<Row> {
-    public children: Map<string, Node<Row>>;
-    public _rawData: DataSource<Row>;
-    public aggFunc: AggFC<Row>;
-    public _aggData: Row;
+class Node {
+    public children: Map<string, Node>;
+    public _rawData: DataSource;
+    public aggFunc: AggFC;
+    public _aggData: JsonRecord;
     public cache: boolean;
-    constructor(aggFunc: AggFC<Row>) {
+    constructor(aggFunc: AggFC) {
         this.children = new Map();
         this._rawData = [];
         this.aggFunc = aggFunc;
         this.cache = false;
     }
-    push(...params: Array<Row>): void {
+    push(...params: Array<JsonRecord>): void {
         this._rawData.push(...params);
     }
-    aggData(measures: Fields = []): Row {
+    aggData(measures: Fields = []): JsonRecord {
         if (!this.cache) {
             this._aggData = this.aggFunc(this.rawData, measures);
             this.cache = true;
@@ -25,14 +25,14 @@ class Node<Row> {
     clearCache(): void {
         this.cache = false;
     }
-    get rawData(): DataSource<Row> {
+    get rawData(): DataSource {
         if (!this.cache) {
             if (this.children.size !== 0) {
                 let children = this.children.values();
-                let rawData: DataSource<Row> = [];
+                let rawData: DataSource = [];
                 for (let child of children) {
                     let i: number;
-                    let data: DataSource<Row> = child.rawData;
+                    let data: DataSource = child.rawData;
                     let len: number = data.length;
                     for (i = 0; i < len; i++) {
                         rawData.push(data[i]);
@@ -44,8 +44,8 @@ class Node<Row> {
         }
         return this._rawData;
     }
-    public getNode(dimensions: Fields): Node<Row> | null {
-        const search: (node: Node<Row>, level: number) => Node<Row> | null = (
+    public getNode(dimensions: any[]): Node | null {
+        const search: (node: Node, level: number) => Node | null = (
             node,
             level
         ) => {
@@ -64,21 +64,21 @@ class Node<Row> {
     }
 }
 
-class periodCube<Row> {
-    private aggFunc: AggFC<Row>;
-    private factTable: DataSource<Row>;
+class periodCube {
+    private aggFunc: AggFC;
+    private factTable: DataSource;
     private dimensions: string[];
     private measures: string[];
-    public tree: Node<Row>;
-    constructor(props: CubeProps<Row>) {
+    public tree: Node;
+    constructor(props: CubeProps) {
         this.aggFunc = props.aggFunc;
         this.factTable = props.factTable;
         this.dimensions = props.dimensions;
         this.measures = props.measures;
     }
-    public get(dimensions: Fields): Row | false {
+    public get(dimensions: any[]): JsonRecord | false {
         const { tree, aggFunc, measures } = this;
-        const search: (node: Node<Row>, level: number) => Row | false = (
+        const search: (node: Node, level: number) => JsonRecord | false = (
             node,
             level
         ) => {
@@ -95,13 +95,13 @@ class periodCube<Row> {
         };
         return search(tree, 0);
     }
-    public getNode(dimensions: Fields): Node<Row> | null {
+    public getNode(dimensions: any[]): Node | null {
         const { tree } = this;
         return tree.getNode(dimensions);
     }
 
-    public buildTree(): Node<Row> {
-        let tree: Node<Row> = new Node(this.aggFunc);
+    public buildTree(): Node {
+        let tree: Node = new Node(this.aggFunc);
         let len = this.factTable.length,
             i;
         for (i = 0; i < len; i++) {
@@ -123,7 +123,7 @@ class periodCube<Row> {
         }
     }
 
-    public aggTree(node: Node<Row> = this.tree): Node<Row> {
+    public aggTree(node: Node = this.tree): Node {
         let children = node.children.values();
         for (let child of children) {
             this.aggTree(child);
@@ -132,7 +132,7 @@ class periodCube<Row> {
         return node;
     }
 
-    public aggNode(node = this.tree): Node<Row> {
+    public aggNode(node = this.tree): Node {
         let children = node.children.values();
         for (let child of children) {
             this.aggTree(child);

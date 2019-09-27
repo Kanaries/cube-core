@@ -1,15 +1,15 @@
-export type DataSource<Row> = Array<Row>;
+export type JsonRecord = { [key: string]: any };
+
+export type DataSource = Array<JsonRecord>;
 
 export type Fields = string[];
 
-export type AggFC<Row> = (subset: DataSource<Row>, measures: Fields) => Row;
+export type AggFC = (subset: DataSource, measures: Fields) => JsonRecord;
 
-export interface CubeProps<Row> {
-  aggFunc?: AggFC<Row>;
-  factTable?: DataSource<Row>;
+export interface CubeProps {
+  aggFunc?: AggFC;
+  factTable?: DataSource;
   dimensions?: Fields;
   measures?: Fields;
   [key: string]: any;
 }
-
-export type JsonRecord = { [key: string]: any };
