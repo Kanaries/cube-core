@@ -6,6 +6,8 @@
 cube-core 是一个高效的Cube求解工具，你可以借助它来实现快速的Cube运算或搭建pivot table组件。
 如果你想了解能够使用cube-core做什么，可以了解一个基于cube-core实现的前端的高性能pivot table项目：[fast-pivot](https://github.com/ObservedObserver/fast-pivot)
 
+cube-core的优势在于其在保证性能的同时，又可以支持所有复杂类指标的聚合函数：`Distributive`, `Algebraic`与`Holistic`(如众数、中位数、k大数)。同时cube-core支持cube的动态增长、流式数据、cube中数据的增删查改。除了简单的聚合计算，对于需要对cube高频使用、利用局部预计算或共享相同子cube的场景cube-core都是非常好的选择。
+
 ## 使用
 
 ```bash
