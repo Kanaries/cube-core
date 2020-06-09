@@ -47,7 +47,11 @@ class momentCube {
         this.factTable = props.factTable;
         this.dimensions = props.dimensions;
         this.measures = props.measures;
+    }
+    public createDataFrames() {
         this.buildTree();
+    }
+    public aggregateDataFrames() {
         this.aggTree();
     }
     public get(dimensions: any): JsonRecord | false {
