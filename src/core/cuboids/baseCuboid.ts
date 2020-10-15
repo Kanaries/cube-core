@@ -1,8 +1,11 @@
 import { JsonRecord } from "../../types";
 import { CuboidTreeNode } from "./base/cuboidTreeNode";
-import { ROOT_ID } from "../../constants";
+import { ROOT_ID, WILDCARD_CHARACTER } from "../../constants";
 import { DefaultMeasureTypes } from "../commons/measureFactory";
-
+export interface QueryNode {
+    dimKey: string;
+    dimValue: any;
+}
 export class BaseCuboid<M extends DefaultMeasureTypes> {
     public dimensions: string[];
     public measures: string[];
@@ -62,5 +65,50 @@ export class BaseCuboid<M extends DefaultMeasureTypes> {
             }
             this.insertNode(tree.children.get(record[dim]), record, depth + 1);
         }
+    }
+    public query(queryPath: QueryNode[] = []): JsonRecord[] {
+        const fullPath: QueryNode[] = [];
+        for (let i = 0; i < this.dimensions.length; i++) {
+            const dim = this.dimensions[i];
+            const target = queryPath.find(q => q.dimKey === dim);
+            if (target) {
+                fullPath.push(target)
+            } else {
+                fullPath.push({
+                    dimKey: dim,
+                    dimValue: WILDCARD_CHARACTER
+                })
+            }
+        }
+        return this.queryNode(this.nestTree, fullPath, 0);
+    }
+    public queryNode(node: CuboidTreeNode<M>, queryPath: QueryNode[], depth: number): JsonRecord[] {
+        if (depth === queryPath.length) {
+            const record = node.measureSet.serialize();
+            return [BaseCuboid.combineDimensionKV(record, queryPath)];
+        }
+        const qNode = queryPath[depth];
+        let records: JsonRecord[] = [];
+        if (qNode.dimValue === WILDCARD_CHARACTER) {
+            let childKey: string;
+            let childNode: CuboidTreeNode<M>;
+            for ([childKey, childNode] of node.children) {
+                const childPath: QueryNode[] = [...queryPath]
+                childPath[depth] = { dimKey: qNode.dimKey, dimValue: childKey };
+                const subset = this.queryNode(childNode, childPath, depth + 1)
+                let record: JsonRecord;
+                for (record of subset) records.push(record);
+            }
+        }
+        return records;
+    }
+    public static combineDimensionKV(record: JsonRecord, queryPath: QueryNode[]): JsonRecord {
+        const ans: JsonRecord = {
+            ...record
+        }
+        for (let node of queryPath) {
+            ans[node.dimKey] = node.dimValue;
+        }
+        return ans;
     }
 }

@@ -4,7 +4,9 @@
         "lib": ["es2019"],
         "target": "es5",
         "downlevelIteration": true,
-        "declaration": true
+        "declaration": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true
     },
     "include": [
         "./src/**/*"
